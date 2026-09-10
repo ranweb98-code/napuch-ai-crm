@@ -24,16 +24,16 @@ export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
   CLOSED_LOST: "Closed-Lost",
 };
 
-// Text color classes only — no background chips. Keeps the list view
-// disciplined (per design principles) rather than a wall of colored pills.
-export const LEAD_STATUS_TEXT_CLASS: Record<LeadStatus, string> = {
-  NEW: "text-foreground/55",
-  CONTACTED: "text-foreground/80",
-  INTERESTED: "text-primary",
-  MEETING_SCHEDULED: "text-primary",
-  PROPOSAL_SENT: "text-primary font-medium",
-  CLOSED_WON: "text-emerald-400",
-  CLOSED_LOST: "text-foreground/35 line-through decoration-foreground/25",
+// Soft tinted-background pills, matching the reference design's status
+// badges (e.g. "Terminée" / "En cours" / "En attente").
+export const LEAD_STATUS_PILL_CLASS: Record<LeadStatus, string> = {
+  NEW: "bg-border text-muted",
+  CONTACTED: "bg-info-tint text-info",
+  INTERESTED: "bg-primary-tint text-primary",
+  MEETING_SCHEDULED: "bg-primary-tint text-primary",
+  PROPOSAL_SENT: "bg-warning-tint text-warning",
+  CLOSED_WON: "bg-success-tint text-success",
+  CLOSED_LOST: "bg-danger-tint text-danger",
 };
 
 export const OPEN_LEAD_STATUSES: LeadStatus[] = LEAD_STATUSES.filter(

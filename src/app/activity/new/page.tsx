@@ -28,14 +28,16 @@ export default async function NewActivityPage({
 
   return (
     <div className="mx-auto flex max-w-xl flex-col gap-6">
-      <h1 className="text-2xl font-semibold">
+      <h1 className="text-2xl font-bold">
         {defaultType === "NOTE" ? "Add note" : "Log activity"}
       </h1>
-      <ActivityForm
-        leads={leads.map((l) => ({ id: l.id, businessName: l.businessName }))}
-        defaultType={defaultType}
-        submitLabel={defaultType === "NOTE" ? "Add note" : "Log activity"}
-      />
+      <div className="card p-6">
+        <ActivityForm
+          leads={leads.map((l) => ({ id: l.id, businessName: l.businessName }))}
+          defaultType={defaultType}
+          submitLabel={defaultType === "NOTE" ? "Add note" : "Log activity"}
+        />
+      </div>
     </div>
   );
 }

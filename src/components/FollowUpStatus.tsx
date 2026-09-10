@@ -21,11 +21,11 @@ export function FollowUpStatus({
     <span
       className={cn(
         "inline-flex items-center gap-1.5 text-sm",
-        hot ? "text-hot" : "text-muted",
+        hot ? "font-semibold text-warning" : "text-muted",
         className,
       )}
     >
-      {hot && <span className="size-1.5 shrink-0 rounded-full bg-hot" aria-hidden />}
+      {hot && <span className="size-1.5 shrink-0 rounded-full bg-warning" aria-hidden />}
       {formatFollowUp(date)}
     </span>
   );

@@ -135,12 +135,22 @@ export async function getLeads(options: {
   sortBy?: LeadSortKey;
   sortDir?: "asc" | "desc";
   filter?: LeadFilter;
+  query?: string;
 } = {}): Promise<LeadModel[]> {
-  const { sortBy = "nextFollowUp", sortDir = "asc", filter = "all" } = options;
+  const { sortBy = "nextFollowUp", sortDir = "asc", filter = "all", query } = options;
+  const q = query?.trim();
 
   // Status has no natural alphabetical order — sort by pipeline stage
   // instead, which means fetching unsorted here and ordering in JS below.
   const leads = await prisma.lead.findMany({
+    where: q
+      ? {
+          OR: [
+            { businessName: { contains: q } },
+            { contactName: { contains: q } },
+          ],
+        }
+      : undefined,
     orderBy: sortBy === "status" ? { dateAdded: "desc" } : { [sortBy]: sortDir },
   });
 
@@ -262,6 +272,22 @@ export async function getLeadsAddedTimeline(days = 30, now = new Date()): Promis
   }
 
   return Array.from(counts.entries()).map(([date, count]) => ({ date, count }));
+}
+
+/** Count of leads per status, in pipeline order. */
+export async function getStatusDistribution(): Promise<{ status: LeadStatus; count: number }[]> {
+  const leads = await prisma.lead.findMany({ select: { status: true } });
+  const counts = new Map<LeadStatus, number>(LEAD_STATUSES.map((s) => [s, 0]));
+  for (const lead of leads) {
+    const status = lead.status as LeadStatus;
+    counts.set(status, (counts.get(status) ?? 0) + 1);
+  }
+  return LEAD_STATUSES.map((status) => ({ status, count: counts.get(status) ?? 0 }));
+}
+
+/** Most recently added leads, newest first. */
+export async function getRecentLeads(limit = 5): Promise<LeadModel[]> {
+  return prisma.lead.findMany({ orderBy: { dateAdded: "desc" }, take: limit });
 }
 
 function toISODate(date: Date): string {

@@ -14,7 +14,7 @@ export function DeleteLeadButton({ leadId, businessName }: { leadId: string; bus
         }
       }}
     >
-      <button type="submit" className="text-sm text-muted transition-colors hover:text-hot">
+      <button type="submit" className="text-sm font-medium text-muted transition-colors hover:text-danger">
         Delete lead
       </button>
     </form>

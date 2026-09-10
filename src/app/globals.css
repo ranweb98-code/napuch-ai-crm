@@ -1,31 +1,64 @@
 @import "tailwindcss";
 
 :root {
-  --background: #12101a;
-  --surface: #1a1723;
-  --border: #2c2836;
-  --foreground: #f2f0f5;
-  --muted: #a29db3;
+  /* Page + surfaces */
+  --background: #f2f3fa;
+  --surface: #ffffff;
+  --sidebar: #14152b;
+  --border: #eaebf4;
 
-  --primary: #8a2c8f;
-  --primary-foreground: #f2f0f5;
+  /* Text */
+  --foreground: #12131f;
+  --muted: #767a94;
 
-  /* Reserved for hot-lead / urgent indicators only — never decorative. */
-  --hot: #e8792b;
+  /* Brand — indigo/blue, used pervasively (not sparingly) per reference design */
+  --primary: #4453f0;
+  --primary-dark: #3641d6;
+  --primary-foreground: #ffffff;
+  --primary-tint: #eaecfd;
+  --gradient-brand: linear-gradient(135deg, #6d63f7 0%, #4453f0 55%, #3641d6 100%);
 
-  /* The one deliberate place the brand gradient appears: the wordmark. */
-  --gradient-brand: linear-gradient(115deg, #6a2c8f 0%, #a5308f 45%, #e8792b 100%);
+  /* Status colors */
+  --success: #17a34a;
+  --success-tint: #e1f8ea;
+  --danger: #e6483a;
+  --danger-tint: #fdeae8;
+  --warning: #ee9d1f;
+  --warning-tint: #fdf1dc;
+  --info: #2f7de1;
+  --info-tint: #e6f0fd;
+
+  /* Chart palette */
+  --chart-1: #4453f0;
+  --chart-2: #93aefb;
+  --chart-3: #ee9d1f;
+  --chart-4: #34c78a;
+
+  --shadow-card: 0 1px 2px rgba(20, 21, 60, 0.04), 0 12px 24px -12px rgba(30, 34, 90, 0.14);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
+  --color-sidebar: var(--sidebar);
   --color-border: var(--border);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
+
   --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
   --color-primary-foreground: var(--primary-foreground);
-  --color-hot: var(--hot);
+  --color-primary-tint: var(--primary-tint);
+
+  --color-success: var(--success);
+  --color-success-tint: var(--success-tint);
+  --color-danger: var(--danger);
+  --color-danger-tint: var(--danger-tint);
+  --color-warning: var(--warning);
+  --color-warning-tint: var(--warning-tint);
+  --color-info: var(--info);
+  --color-info-tint: var(--info-tint);
+
   --font-sans: var(--font-manrope);
 }
 
@@ -37,4 +70,13 @@ body {
 ::selection {
   background: var(--primary);
   color: var(--primary-foreground);
+}
+
+.card {
+  /* background-color (not the `background` shorthand) so a gradient
+     utility like bg-[image:var(--gradient-brand)] on the hero stat card
+     isn't reset back to none by this rule. */
+  background-color: var(--surface);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
 }

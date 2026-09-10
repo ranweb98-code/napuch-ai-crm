@@ -10,8 +10,8 @@ import { formatDate } from "@/lib/dates";
 import { BUTTON_PRIMARY } from "@/lib/styles";
 
 const INPUT_CLASS =
-  "w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
-const LABEL_CLASS = "mb-1.5 block text-sm font-medium text-foreground/90";
+  "w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
+const LABEL_CLASS = "mb-1.5 block text-sm font-semibold text-foreground/90";
 
 export interface LeadFormValues {
   businessName: string;
