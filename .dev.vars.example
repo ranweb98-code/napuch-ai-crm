@@ -1,0 +1,7 @@
+NEXTJS_ENV=development
+
+# Same requirement as .env.example: a real libSQL HTTP endpoint, local
+# (`turso dev`) or a real Turso database. See README.md "Deploying to
+# Cloudflare Workers".
+DATABASE_URL="libsql://your-db-name.turso.io"
+DATABASE_AUTH_TOKEN="your-turso-auth-token"

@@ -7,31 +7,51 @@ manual data entry, built to run on its own — not part of any other project.
 
 - **Next.js 16** (App Router, React 19, TypeScript strict)
 - **Tailwind CSS v4** for styling
-- **Prisma 7** + **SQLite** (via the `@prisma/adapter-libsql` driver adapter) for data
+- **Prisma 7** + **libSQL/Turso** (via `@prisma/adapter-libsql/web`, the HTTP-based
+  client) for data — this is what lets the app run on Cloudflare Workers, which has
+  no filesystem
+- **Cloudflare Workers** (via `@opennextjs/cloudflare`) for hosting
 
 ## Getting started
 
+The app always talks to libSQL over HTTP, so it needs a real libSQL endpoint even
+locally — there's no local-file SQLite mode. Cheapest option, no cloud account:
+
+```bash
+npm install -g @tursodatabase/cli   # or: curl -sSfL https://get.tur.so/install.sh | bash
+turso dev                            # starts a local libSQL-compatible server
+```
+
+Then, in another terminal:
+
 ```bash
 npm install
+cp .env.example .env
+# .env: DATABASE_URL="http://127.0.0.1:8080", DATABASE_AUTH_TOKEN=""
+npx prisma migrate dev
 npm run db:seed   # optional — a handful of example leads so the app isn't empty
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The first run creates
-`prisma/dev.db`, a local SQLite file — nothing else to configure.
+Open [http://localhost:3000](http://localhost:3000). To use a real hosted
+[Turso](https://turso.tech) database instead of `turso dev`, set `DATABASE_URL`
+to its `libsql://...` URL and `DATABASE_AUTH_TOKEN` to a token from
+`turso db tokens create`.
 
 ## Commands
 
 | Command | Description |
 | --- | --- |
 | `npm run dev` | Start the dev server |
-| `npm run build` | Production build |
-| `npm run start` | Run the production build |
+| `npm run build` | Production build (plain Next.js) |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript check |
 | `npm run db:seed` | Seed the database with example leads |
 | `npx prisma studio` | Browse/edit the database in a GUI |
 | `npx prisma migrate dev` | Apply schema changes during development |
+| `npm run preview` | Build for Cloudflare and run it locally via Wrangler |
+| `npm run deploy` | Build for Cloudflare and deploy to Workers |
+| `npm run cf-typegen` | Regenerate `cloudflare-env.d.ts` after changing `wrangler.jsonc` |
 
 ## Data model & architecture
 
@@ -44,35 +64,73 @@ Open [http://localhost:3000](http://localhost:3000). The first run creates
   etc.). The UI never calls Prisma directly.
 - `src/app/actions/leads.ts` — thin Server Action wrappers around
   `lib/leads.ts` that parse form data and handle redirects.
+- `src/lib/db.ts` — the Prisma client. It's created lazily, reading
+  `DATABASE_URL`/`DATABASE_AUTH_TOKEN` from the Cloudflare Workers runtime
+  context when deployed there, or from `process.env` for plain Node. It's
+  lazy on purpose: Next.js can evaluate this module during `next build`
+  (e.g. tracing a Server Action referenced from a static page), and eagerly
+  reading env at that point would capture the *build machine's* environment
+  instead of the deployed request's.
 
 This split is deliberate: a future automated integration (a WhatsApp
 webhook, a website contact-form handler) can call `createLead()` from a
 route handler exactly the way a form does today, with no changes to the
 data layer or the UI.
 
-## Deploying (Vercel)
+## Deploying to Cloudflare Workers
 
-Vercel's filesystem is ephemeral and read-only in production, so a plain
-local SQLite file won't persist there. The app already uses the libSQL
-driver adapter, so pointing it at a hosted libSQL database (e.g.
-[Turso](https://turso.tech), which has a free tier) is a two-env-var change
-— no code changes and no migration to Postgres needed:
+The app is set up with [OpenNext for Cloudflare](https://opennext.js.org/cloudflare),
+which adapts the Next.js build into a Cloudflare Worker (`wrangler.jsonc`,
+`open-next.config.ts`). No incremental/ISR cache is configured — every page here
+renders dynamically per-request from Prisma, so there's nothing for a cache to help
+with; see [caching](https://opennext.js.org/cloudflare/caching) if that changes later.
 
-1. Create a Turso database and grab its `libsql://...` URL and an auth
-   token (`turso db create napuch-ai-crm`, then `turso db tokens create`).
-2. In the Vercel project's environment variables, set:
-   - `DATABASE_URL` → the `libsql://...` URL
-   - `DATABASE_AUTH_TOKEN` → the auth token
-3. Apply the schema to that database once, from your machine:
+1. **Database.** Create a [Turso](https://turso.tech) database (free tier):
+   ```bash
+   turso db create napuch-ai-crm
+   turso db show napuch-ai-crm --url          # → DATABASE_URL
+   turso db tokens create napuch-ai-crm        # → DATABASE_AUTH_TOKEN
+   ```
+   Apply the schema to it once:
    ```bash
    DATABASE_URL="libsql://..." DATABASE_AUTH_TOKEN="..." npx prisma migrate deploy
    ```
-4. Deploy. `postinstall` runs `prisma generate` automatically as part of
-   the build.
+2. **Cloudflare auth.** Either run `npx wrangler login` (opens a browser), or set
+   `CLOUDFLARE_API_TOKEN` (and `CLOUDFLARE_ACCOUNT_ID` if your account has more than
+   one) as environment variables — needed for any `wrangler`/`opennextjs-cloudflare`
+   command below.
+3. **Secrets.** Set the two DB vars as Worker secrets (not plaintext — they aren't
+   in `wrangler.jsonc`):
+   ```bash
+   npx wrangler secret put DATABASE_URL
+   npx wrangler secret put DATABASE_AUTH_TOKEN
+   ```
+4. **Deploy:**
+   ```bash
+   npm run deploy
+   ```
+   This runs `opennextjs-cloudflare build` (Next.js build + adapts it for
+   Workers) then `opennextjs-cloudflare deploy` (`wrangler deploy`).
 
-Locally, `.env` keeps using `DATABASE_URL="file:./prisma/dev.db"` with an
-empty `DATABASE_AUTH_TOKEN` — see `.env.example`.
+To try it locally against Wrangler's simulated Workers runtime first, set
+`DATABASE_URL`/`DATABASE_AUTH_TOKEN` in `.dev.vars` (see `.dev.vars.example`,
+already gitignored) and run `npm run preview` instead.
 
-Since this is a single-user internal tool with no login screen, consider
-turning on Vercel's [deployment protection](https://vercel.com/docs/deployment-protection)
-(password or SSO) so it isn't publicly reachable.
+Since this is a single-user internal tool with no login screen, consider putting
+it behind [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/)
+so it isn't publicly reachable.
+
+### Why the web/HTTP libSQL client
+
+`@prisma/adapter-libsql`'s default (Node-native) client won't bundle for Workers —
+Cloudflare has no real filesystem or raw TCP sockets. The app instead always uses
+`@prisma/adapter-libsql/web`, the HTTP-based client, which works identically from
+plain Node too. One consequence worth knowing if you touch `next.config.ts`:
+`@libsql/client`'s web build statically imports its WebSocket transport
+(`@libsql/hrana-client` → `@libsql/isomorphic-ws`), and Next's build-time file
+tracer resolves that package under Node's export conditions — so it leaves the
+`workerd`-specific file out of the traced output, even though the app only ever
+uses plain HTTPS. `outputFileTracingIncludes` in `next.config.ts` forces it back in;
+if a future `@libsql/client` upgrade changes that package's file layout, that's the
+first place to look if a Workers build starts failing with a "Could not resolve"
+esbuild error for `@libsql/isomorphic-ws`.
