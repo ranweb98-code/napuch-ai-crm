@@ -116,6 +116,23 @@ To try it locally against Wrangler's simulated Workers runtime first, set
 `DATABASE_URL`/`DATABASE_AUTH_TOKEN` in `.dev.vars` (see `.dev.vars.example`,
 already gitignored) and run `npm run preview` instead.
 
+### Deploying via the Cloudflare dashboard (no CLI/token needed)
+
+Steps 1 (Turso) and 3 (secrets) above still apply — a git-connected deploy still
+needs a real database and the secrets set somewhere. For the build/deploy itself:
+
+1. **dash.cloudflare.com → Workers & Pages → Create → Connect to Git** → pick
+   this repo (`napuch-ai-crm`) and the `main` branch.
+2. Build settings:
+   - **Build command:** `npm run build:worker`
+   - **Deploy command:** leave the default (`npx wrangler deploy`) — Cloudflare
+     runs this itself after the build; don't use `npm run deploy` here, it would
+     try to deploy a second time.
+   - **Root directory:** `/` (default)
+3. Under the Worker's **Settings → Variables and Secrets**, add `DATABASE_URL`
+   and `DATABASE_AUTH_TOKEN` as **secrets** (not plaintext vars).
+4. Save — Cloudflare builds and deploys now, and again on every push to `main`.
+
 Since this is a single-user internal tool with no login screen, consider putting
 it behind [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/)
 so it isn't publicly reachable.
