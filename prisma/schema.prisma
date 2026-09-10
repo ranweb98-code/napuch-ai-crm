@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// SQLite has no native enum support, so `channelSource`, `status`, and
+// `type` below are plain strings. The allowed values live in
+// src/lib/constants.ts and are validated at the data-access layer
+// (src/lib/leads.ts) before anything is written.
+
+model Lead {
+  id            String   @id @default(uuid())
+  businessName  String
+  contactName   String?
+  phone         String?
+  channelSource String   @default("OTHER")
+  status        String   @default("NEW")
+  notes         String?
+  nextFollowUp  DateTime?
+  dateAdded     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  closedAt      DateTime?
+
+  activities Activity[]
+
+  @@index([status])
+  @@index([nextFollowUp])
+  @@index([dateAdded])
+}
+
+model Activity {
+  id        String   @id @default(uuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type      String   @default("NOTE")
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([leadId])
+}

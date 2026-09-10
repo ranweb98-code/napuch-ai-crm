@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  --background: #12101a;
+  --surface: #1a1723;
+  --border: #2c2836;
+  --foreground: #f2f0f5;
+  --muted: #a29db3;
+
+  --primary: #8a2c8f;
+  --primary-foreground: #f2f0f5;
+
+  /* Reserved for hot-lead / urgent indicators only — never decorative. */
+  --hot: #e8792b;
+
+  /* The one deliberate place the brand gradient appears: the wordmark. */
+  --gradient-brand: linear-gradient(115deg, #6a2c8f 0%, #a5308f 45%, #e8792b 100%);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-hot: var(--hot);
+  --font-sans: var(--font-manrope);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
