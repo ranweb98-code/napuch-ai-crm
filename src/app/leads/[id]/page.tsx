@@ -46,7 +46,7 @@ export default async function LeadDetailPage({
         <div className="flex items-center gap-4">
           <Avatar name={lead.businessName} className="size-14 text-lg" />
           <div>
-            <h1 className="text-xl font-bold">{lead.businessName}</h1>
+            <h1 className="font-display text-2xl font-bold tracking-tight">{lead.businessName}</h1>
             {lead.contactName && <p className="text-sm text-muted">{lead.contactName}</p>}
           </div>
         </div>

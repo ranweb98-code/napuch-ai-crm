@@ -28,7 +28,7 @@ export default async function NewActivityPage({
 
   return (
     <div className="mx-auto flex max-w-xl flex-col gap-6">
-      <h1 className="text-2xl font-bold">
+      <h1 className="font-display text-3xl font-bold tracking-tight">
         {defaultType === "NOTE" ? "Add note" : "Log activity"}
       </h1>
       <div className="card p-6">

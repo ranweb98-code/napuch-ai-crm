@@ -84,7 +84,7 @@ export default async function LeadsPage({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">Leads</h1>
+        <h1 className="font-display text-3xl font-bold tracking-tight">Leads</h1>
         <Link href="/leads/new" className={BUTTON_PRIMARY}>
           Add Lead
         </Link>

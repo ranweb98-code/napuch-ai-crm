@@ -82,32 +82,43 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-bold">{greeting(new Date())} 👋</h1>
-        <p className="mt-1 text-muted">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+          <span className="font-display text-gradient-animate">{greeting(new Date())}</span>{" "}
+          <span aria-hidden="true">👋</span>
+        </h1>
+        <p className="mt-2 text-muted">
           {isDemo ? "Sample data — add your first lead to get started." : followUpStatusLine(stats)}
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatCard
-          label="Total leads"
-          value={stats.totalLeads}
-          icon={Users}
-          delta={delta}
-          sparkline={timeline.slice(-14).map((p) => p.count)}
-          variant="hero"
-        />
-        <StatCard label="Hot leads" value={stats.hotLeads} icon={Flame} />
-        <StatCard label="Closed this month" value={stats.closedThisMonth} icon={Trophy} />
-        <StatCard label="Due today" value={stats.dueToday} icon={CalendarClock} />
+        <div className="animate-fade-up" style={{ animationDelay: "0ms" }}>
+          <StatCard
+            label="Total leads"
+            value={stats.totalLeads}
+            icon={Users}
+            delta={delta}
+            sparkline={timeline.slice(-14).map((p) => p.count)}
+            variant="hero"
+          />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "70ms" }}>
+          <StatCard label="Hot leads" value={stats.hotLeads} icon={Flame} />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "140ms" }}>
+          <StatCard label="Closed this month" value={stats.closedThisMonth} icon={Trophy} />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "210ms" }}>
+          <StatCard label="Due today" value={stats.dueToday} icon={CalendarClock} />
+        </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-5">
-        <div className="card p-5 lg:col-span-3">
+        <div className="card animate-fade-up p-5 lg:col-span-3" style={{ animationDelay: "280ms" }}>
           <h2 className="mb-4 text-sm font-semibold text-foreground">Leads added — last 30 days</h2>
           <LeadsAddedChart data={timeline} />
         </div>
-        <div className="card p-5 lg:col-span-2">
+        <div className="card animate-fade-up p-5 lg:col-span-2" style={{ animationDelay: "340ms" }}>
           <h2 className="mb-4 text-sm font-semibold text-foreground">Pipeline breakdown</h2>
           <DonutChart segments={donutSegments} />
         </div>
