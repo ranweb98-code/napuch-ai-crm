@@ -16,7 +16,7 @@ import {
   followUpStatusLine,
   type DashboardStats,
 } from "@/lib/leads";
-import { getDemoDashboardData, type RecentLeadItem } from "@/lib/demoDashboard";
+import { getDemoDashboardData, type RecentLeadItem } from "@/lib/demoData";
 import { StatCard } from "@/components/StatCard";
 import { LeadsAddedChart } from "@/components/LeadsAddedChart";
 import { DonutChart } from "@/components/DonutChart";
@@ -30,15 +30,15 @@ export const dynamic = "force-dynamic";
 
 function greeting(now: Date): string {
   const hour = now.getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return "בוקר טוב";
+  if (hour < 18) return "צהריים טובים";
+  return "ערב טוב";
 }
 
 const QUICK_ACTIONS = [
-  { href: "/leads/new", label: "Add Lead", icon: UserPlus },
-  { href: "/activity/new?type=NOTE", label: "Add Note", icon: StickyNote },
-  { href: "/activity/new", label: "Log Activity", icon: ClipboardList },
+  { href: "/leads/new", label: "הוספת ליד", icon: UserPlus },
+  { href: "/activity/new?type=NOTE", label: "הוספת הערה", icon: StickyNote },
+  { href: "/activity/new", label: "רישום פעילות", icon: ClipboardList },
 ];
 
 async function loadDashboardData(isDemo: boolean, realStats: DashboardStats) {
@@ -62,7 +62,7 @@ export default async function DashboardPage() {
   const delta =
     prev7 === 0
       ? last7 > 0
-        ? { value: "New this week", direction: "up" as const }
+        ? { value: "חדש השבוע", direction: "up" as const }
         : null
       : {
           value: `${Math.abs(Math.round(((last7 - prev7) / prev7) * 100))}%`,
@@ -73,28 +73,29 @@ export default async function DashboardPage() {
   const inProgress =
     byStatus("CONTACTED") + byStatus("INTERESTED") + byStatus("MEETING_SCHEDULED") + byStatus("PROPOSAL_SENT");
   const donutSegments = [
-    { label: "New", value: byStatus("NEW"), color: "var(--chart-2)" },
-    { label: "In progress", value: inProgress, color: "var(--primary)" },
-    { label: "Won", value: byStatus("CLOSED_WON"), color: "var(--success)" },
-    { label: "Lost", value: byStatus("CLOSED_LOST"), color: "var(--danger)" },
+    { label: "חדש", value: byStatus("NEW"), color: "var(--chart-2)" },
+    { label: "בתהליך", value: inProgress, color: "var(--primary)" },
+    { label: "זכייה", value: byStatus("CLOSED_WON"), color: "var(--success)" },
+    { label: "אבד", value: byStatus("CLOSED_LOST"), color: "var(--danger)" },
   ];
 
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+        <h1 className="text-4xl font-black tracking-tight sm:text-5xl">
           <span className="font-display text-gradient-animate">{greeting(new Date())}</span>{" "}
           <span aria-hidden="true">👋</span>
         </h1>
-        <p className="mt-2 text-muted">
-          {isDemo ? "Sample data — add your first lead to get started." : followUpStatusLine(stats)}
+        <span className="shine-bar mt-3 block h-1.5 w-20 rounded-full" aria-hidden="true" />
+        <p className="mt-3 text-muted">
+          {isDemo ? "נתוני דוגמה — הוסף/הוסיפי ליד ראשון כדי להתחיל." : followUpStatusLine(stats)}
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="animate-fade-up" style={{ animationDelay: "0ms" }}>
           <StatCard
-            label="Total leads"
+            label="סך כל הלידים"
             value={stats.totalLeads}
             icon={Users}
             delta={delta}
@@ -103,23 +104,23 @@ export default async function DashboardPage() {
           />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "70ms" }}>
-          <StatCard label="Hot leads" value={stats.hotLeads} icon={Flame} />
+          <StatCard label="לידים חמים" value={stats.hotLeads} icon={Flame} />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "140ms" }}>
-          <StatCard label="Closed this month" value={stats.closedThisMonth} icon={Trophy} />
+          <StatCard label="נסגרו החודש" value={stats.closedThisMonth} icon={Trophy} />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "210ms" }}>
-          <StatCard label="Due today" value={stats.dueToday} icon={CalendarClock} />
+          <StatCard label="דורש מעקב היום" value={stats.dueToday} icon={CalendarClock} />
         </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-5">
         <div className="card animate-fade-up p-5 lg:col-span-3" style={{ animationDelay: "280ms" }}>
-          <h2 className="mb-4 text-sm font-semibold text-foreground">Leads added — last 30 days</h2>
+          <h2 className="mb-4 text-sm font-semibold text-foreground">לידים חדשים — 30 הימים האחרונים</h2>
           <LeadsAddedChart data={timeline} />
         </div>
         <div className="card animate-fade-up p-5 lg:col-span-2" style={{ animationDelay: "340ms" }}>
-          <h2 className="mb-4 text-sm font-semibold text-foreground">Pipeline breakdown</h2>
+          <h2 className="mb-4 text-sm font-semibold text-foreground">פילוח פייפליין</h2>
           <DonutChart segments={donutSegments} />
         </div>
       </div>
@@ -127,10 +128,10 @@ export default async function DashboardPage() {
       <div className="card flex flex-col gap-4 p-5">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-foreground">
-            {stats.overdue > 0 ? `${stats.overdue} lead${stats.overdue === 1 ? "" : "s"} overdue` : "Recent leads"}
+            {stats.overdue > 0 ? `${stats.overdue} לידים באיחור` : "לידים אחרונים"}
           </h2>
-          <Link href="/leads" className="text-sm font-medium text-primary hover:underline">
-            View all
+          <Link href="/leads" className="text-sm font-medium text-primary-text hover:underline">
+            הצג הכל
           </Link>
         </div>
         <div className="flex flex-wrap gap-5">
@@ -162,7 +163,7 @@ export default async function DashboardPage() {
       </div>
 
       <div>
-        <h2 className="mb-3 text-sm font-semibold text-foreground">Quick actions</h2>
+        <h2 className="mb-3 text-sm font-semibold text-foreground">פעולות מהירות</h2>
         <div className="grid grid-cols-3 gap-4 sm:max-w-md">
           {QUICK_ACTIONS.map(({ href, label, icon: Icon }) => (
             <Link

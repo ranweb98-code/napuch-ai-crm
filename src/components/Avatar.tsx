@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 const PALETTE = [
-  "bg-primary-tint text-primary",
+  "bg-primary-tint text-primary-text",
   "bg-success-tint text-success",
   "bg-warning-tint text-warning",
   "bg-info-tint text-info",

@@ -6,21 +6,21 @@ import { LayoutGrid, Users, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "/", label: "Dashboard", icon: LayoutGrid },
-  { href: "/leads", label: "Leads", icon: Users },
+  { href: "/", label: "דשבורד", icon: LayoutGrid },
+  { href: "/leads", label: "לידים", icon: Users },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-20 hidden w-20 flex-col items-center gap-6 bg-sidebar py-6 sm:flex">
+    <aside className="fixed inset-y-0 start-0 z-20 hidden w-20 flex-col items-center gap-6 bg-sidebar py-6 sm:flex">
       <Link
         href="/"
-        className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[image:var(--gradient-brand)] text-lg font-extrabold text-white shadow-lg"
+        className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-lg font-black text-primary-foreground shadow-lg"
         aria-label="Napuch AI CRM"
       >
-        N
+        נ
       </Link>
 
       <nav className="flex flex-col items-center gap-2">
@@ -34,7 +34,7 @@ export function Sidebar() {
               className={cn(
                 "flex size-11 items-center justify-center rounded-xl transition-colors",
                 active
-                  ? "bg-[image:var(--gradient-brand)] text-white shadow-lg"
+                  ? "bg-primary text-primary-foreground shadow-lg"
                   : "text-white/45 hover:bg-white/10 hover:text-white",
               )}
             >
@@ -48,7 +48,7 @@ export function Sidebar() {
 
       <Link
         href="/leads/new"
-        title="Add lead"
+        title="הוספת ליד"
         className="flex size-11 items-center justify-center rounded-xl text-white/45 transition-colors hover:bg-white/10 hover:text-white"
       >
         <Plus size={20} strokeWidth={2} />

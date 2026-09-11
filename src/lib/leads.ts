@@ -201,14 +201,14 @@ export interface DashboardStats {
  * "3 leads need follow-up today, 2 overdue". */
 export function followUpStatusLine(stats: DashboardStats): string {
   if (stats.dueToday === 0 && stats.overdue === 0) {
-    return "No follow-ups due today — you're all caught up.";
+    return "אין מעקבים שצריך לבצע היום — הכל מעודכן.";
   }
   const parts: string[] = [];
   if (stats.dueToday > 0) {
-    parts.push(`${stats.dueToday} lead${stats.dueToday === 1 ? "" : "s"} need${stats.dueToday === 1 ? "s" : ""} follow-up today`);
+    parts.push(`${stats.dueToday} לידים דורשים מעקב היום`);
   }
   if (stats.overdue > 0) {
-    parts.push(`${stats.overdue} overdue`);
+    parts.push(`${stats.overdue} באיחור`);
   }
   return parts.join(", ") + ".";
 }

@@ -46,7 +46,7 @@ export default async function LeadDetailPage({
         <div className="flex items-center gap-4">
           <Avatar name={lead.businessName} className="size-14 text-lg" />
           <div>
-            <h1 className="font-display text-2xl font-bold tracking-tight">{lead.businessName}</h1>
+            <h1 className="font-display text-2xl font-black tracking-tight">{lead.businessName}</h1>
             {lead.contactName && <p className="text-sm text-muted">{lead.contactName}</p>}
           </div>
         </div>
@@ -58,12 +58,12 @@ export default async function LeadDetailPage({
 
       <div className="card p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-foreground">Details</h2>
+          <h2 className="text-sm font-semibold text-foreground">פרטים</h2>
           <DeleteLeadButton leadId={lead.id} businessName={lead.businessName} />
         </div>
         <LeadForm
           action={boundUpdate}
-          submitLabel="Save changes"
+          submitLabel="שמירת שינויים"
           defaultValues={{
             businessName: lead.businessName,
             contactName: lead.contactName,
@@ -78,14 +78,14 @@ export default async function LeadDetailPage({
       </div>
 
       <div className="card p-6">
-        <h2 className="mb-4 text-sm font-semibold text-foreground">Log activity</h2>
+        <h2 className="mb-4 text-sm font-semibold text-foreground">רישום פעילות</h2>
         <ActivityForm leadId={lead.id} leadName={lead.businessName} />
       </div>
 
       <div className="card p-6">
-        <h2 className="mb-4 text-sm font-semibold text-foreground">History</h2>
+        <h2 className="mb-4 text-sm font-semibold text-foreground">היסטוריה</h2>
         {lead.activities.length === 0 ? (
-          <p className="text-sm text-muted">No activity logged yet.</p>
+          <p className="text-sm text-muted">עדיין לא נרשמה פעילות.</p>
         ) : (
           <ol className="flex flex-col">
             {lead.activities.map((activity) => {
@@ -96,7 +96,7 @@ export default async function LeadDetailPage({
                     className={cn(
                       "flex size-9 shrink-0 items-center justify-center rounded-full",
                       activity.type === "STATUS_CHANGE"
-                        ? "bg-primary-tint text-primary"
+                        ? "bg-primary-tint text-primary-text"
                         : "bg-background text-muted",
                     )}
                   >

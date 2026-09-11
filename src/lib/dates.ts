@@ -23,13 +23,13 @@ export function daysBetween(a: Date, b: Date): number {
   return Math.round((startOfDay(b).getTime() - startOfDay(a).getTime()) / msPerDay);
 }
 
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
+const dateFormatter = new Intl.DateTimeFormat("he-IL", {
   month: "short",
   day: "numeric",
   year: "numeric",
 });
 
-const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
+const dateTimeFormatter = new Intl.DateTimeFormat("he-IL", {
   month: "short",
   day: "numeric",
   year: "numeric",
@@ -49,13 +49,13 @@ export function formatDateTime(date: Date | null | undefined): string {
 
 /** Short, relative label for a follow-up date, e.g. "Today", "3d overdue", "In 5d". */
 export function formatFollowUp(date: Date | null | undefined, now = new Date()): string {
-  if (!date) return "No follow-up set";
+  if (!date) return "לא נקבע מעקב";
   const diff = daysBetween(now, date);
-  if (diff === 0) return "Today";
-  if (diff === 1) return "Tomorrow";
-  if (diff === -1) return "Yesterday (overdue)";
-  if (diff < 0) return `${Math.abs(diff)}d overdue`;
-  return `In ${diff}d — ${formatDate(date)}`;
+  if (diff === 0) return "היום";
+  if (diff === 1) return "מחר";
+  if (diff === -1) return "אתמול (באיחור)";
+  if (diff < 0) return `באיחור של ${Math.abs(diff)} ימים`;
+  return `בעוד ${diff} ימים — ${formatDate(date)}`;
 }
 
 export function isOverdue(date: Date | null | undefined, now = new Date()): boolean {

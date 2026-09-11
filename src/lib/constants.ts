@@ -15,13 +15,13 @@ export const LEAD_STATUSES = [
 export type LeadStatus = (typeof LEAD_STATUSES)[number];
 
 export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
-  NEW: "New",
-  CONTACTED: "Contacted",
-  INTERESTED: "Interested",
-  MEETING_SCHEDULED: "Meeting scheduled",
-  PROPOSAL_SENT: "Proposal sent",
-  CLOSED_WON: "Closed-Won",
-  CLOSED_LOST: "Closed-Lost",
+  NEW: "חדש",
+  CONTACTED: "נוצר קשר",
+  INTERESTED: "מתעניין",
+  MEETING_SCHEDULED: "פגישה נקבעה",
+  PROPOSAL_SENT: "הצעה נשלחה",
+  CLOSED_WON: "נסגר-זכייה",
+  CLOSED_LOST: "נסגר-אבד",
 };
 
 // Soft tinted-background pills, matching the reference design's status
@@ -29,8 +29,8 @@ export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
 export const LEAD_STATUS_PILL_CLASS: Record<LeadStatus, string> = {
   NEW: "bg-border text-muted",
   CONTACTED: "bg-info-tint text-info",
-  INTERESTED: "bg-primary-tint text-primary",
-  MEETING_SCHEDULED: "bg-primary-tint text-primary",
+  INTERESTED: "bg-primary-tint text-primary-text",
+  MEETING_SCHEDULED: "bg-primary-tint text-primary-text",
   PROPOSAL_SENT: "bg-warning-tint text-warning",
   CLOSED_WON: "bg-success-tint text-success",
   CLOSED_LOST: "bg-danger-tint text-danger",
@@ -51,11 +51,11 @@ export const CHANNEL_SOURCES = [
 export type ChannelSource = (typeof CHANNEL_SOURCES)[number];
 
 export const CHANNEL_SOURCE_LABELS: Record<ChannelSource, string> = {
-  MANUAL_OUTREACH: "Manual outreach",
-  WEBSITE_FORM: "Website form",
-  WHATSAPP_INQUIRY: "WhatsApp inquiry",
-  REFERRAL: "Referral",
-  OTHER: "Other",
+  MANUAL_OUTREACH: "פנייה יזומה",
+  WEBSITE_FORM: "טופס באתר",
+  WHATSAPP_INQUIRY: "פנייה בוואטסאפ",
+  REFERRAL: "הפניה",
+  OTHER: "אחר",
 };
 
 export const ACTIVITY_TYPES = [
@@ -70,12 +70,12 @@ export const ACTIVITY_TYPES = [
 export type ActivityType = (typeof ACTIVITY_TYPES)[number];
 
 export const ACTIVITY_TYPE_LABELS: Record<ActivityType, string> = {
-  NOTE: "Note",
-  CALL: "Call",
-  EMAIL: "Email",
-  MEETING: "Meeting",
-  STATUS_CHANGE: "Status change",
-  OTHER: "Other",
+  NOTE: "הערה",
+  CALL: "שיחת טלפון",
+  EMAIL: "אימייל",
+  MEETING: "פגישה",
+  STATUS_CHANGE: "שינוי סטטוס",
+  OTHER: "אחר",
 };
 
 export function isLeadStatus(value: string): value is LeadStatus {

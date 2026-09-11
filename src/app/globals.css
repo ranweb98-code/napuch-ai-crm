@@ -2,23 +2,31 @@
 
 :root {
   /* Page + surfaces */
-  --background: #f2f3fa;
+  --background: #ffffff;
   --surface: #ffffff;
-  --sidebar: #14152b;
-  --border: #eaebf4;
+  --sidebar: #0a0a0a;
+  --border: #e6e6e6;
 
   /* Text */
-  --foreground: #12131f;
-  --muted: #767a94;
+  --foreground: #0a0a0a;
+  --muted: #6b6b6b;
 
-  /* Brand — indigo/blue, used pervasively (not sparingly) per reference design */
-  --primary: #4453f0;
-  --primary-dark: #3641d6;
-  --primary-foreground: #ffffff;
-  --primary-tint: #eaecfd;
-  --gradient-brand: linear-gradient(135deg, #6d63f7 0%, #4453f0 55%, #3641d6 100%);
+  /* Brand — black + bold yellow. --primary is the vivid fill color (icon
+     badges, chart bars/segments, buttons with dark text, the shine accent
+     bar) — it fails text contrast on its own (~1.7:1 on white), so it must
+     never be used as a text/border/ring color by itself. --primary-text is
+     a darkened, accessible gold (5.2:1 on white) for anywhere yellow needs
+     to read as text: links, focus rings, small icons on a tint background. */
+  --primary: #f2c200;
+  --primary-dark: #c79a00;
+  --primary-foreground: #0a0a0a;
+  --primary-tint: #fff6d1;
+  --primary-text: #8a6800;
+  --gradient-brand: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 55%, #000000 100%);
 
-  /* Status colors */
+  /* Status colors — kept semantic (not reskinned to brand) so pipeline
+     state stays distinguishable independent of the black/white/yellow
+     brand palette: won/lost/warning/info still read at a glance. */
   --success: #17a34a;
   --success-tint: #e1f8ea;
   --danger: #e6483a;
@@ -29,12 +37,12 @@
   --info-tint: #e6f0fd;
 
   /* Chart palette */
-  --chart-1: #4453f0;
-  --chart-2: #93aefb;
+  --chart-1: #0a0a0a;
+  --chart-2: #b3b3b3;
   --chart-3: #ee9d1f;
   --chart-4: #34c78a;
 
-  --shadow-card: 0 1px 2px rgba(20, 21, 60, 0.04), 0 12px 24px -12px rgba(30, 34, 90, 0.14);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.05), 0 12px 24px -12px rgba(0, 0, 0, 0.18);
 }
 
 @theme inline {
@@ -49,6 +57,7 @@
   --color-primary-dark: var(--primary-dark);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-tint: var(--primary-tint);
+  --color-primary-text: var(--primary-text);
 
   --color-success: var(--success);
   --color-success-tint: var(--success-tint);
@@ -59,8 +68,8 @@
   --color-info: var(--info);
   --color-info-tint: var(--info-tint);
 
-  --font-sans: var(--font-manrope);
-  --font-display: var(--font-bricolage);
+  --font-sans: var(--font-heebo);
+  --font-display: var(--font-heebo);
 }
 
 body {
@@ -97,12 +106,48 @@ body {
 }
 
 .text-gradient-animate {
-  background-image: linear-gradient(90deg, #6d63f7, #4453f0, #34c78a, #ee9d1f, #4453f0, #6d63f7);
+  /* Cycles between near-black and the accessible dark-gold text tone —
+     not the vivid fill yellow, which would go illegible mid-animation
+     against the white page background. */
+  background-image: linear-gradient(90deg, #0a0a0a, #8a6800, #0a0a0a, #b98e00, #0a0a0a);
   background-size: 300% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   animation: gradient-flow 8s ease-in-out infinite;
+}
+
+/* A small solid-yellow bar with a light "shine" sweeping across it — the
+   literal "moving color" accent, used next to/under big headings. Safe
+   everywhere because it's a fill, never text. */
+.shine-bar {
+  position: relative;
+  overflow: hidden;
+  background: var(--primary);
+}
+
+.shine-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 25%, rgba(255, 255, 255, 0.75) 50%, transparent 75%);
+  background-size: 250% 100%;
+  animation: shine-sweep 3.5s ease-in-out infinite;
+}
+
+@keyframes shine-sweep {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shine-bar::after {
+    animation: none;
+  }
 }
 
 @keyframes fade-slide-up {

@@ -46,7 +46,7 @@ export function StatCard({
         <span
           className={cn(
             "flex size-9 items-center justify-center rounded-xl",
-            hero ? "bg-white/15" : "bg-primary-tint text-primary",
+            hero ? "bg-white/15" : "bg-primary-tint text-primary-text",
           )}
         >
           <Icon size={18} strokeWidth={2} />
@@ -54,7 +54,7 @@ export function StatCard({
       </div>
 
       <div className="flex items-end justify-between gap-3">
-        <span className="text-3xl font-bold tabular-nums">{value}</span>
+        <span className={cn("text-3xl font-bold tabular-nums", hero && "text-primary")}>{value}</span>
         {delta && (
           <span
             className={cn(

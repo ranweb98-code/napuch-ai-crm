@@ -6,8 +6,8 @@ import { LayoutGrid, Users, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "/", label: "Home", icon: LayoutGrid },
-  { href: "/leads", label: "Leads", icon: Users },
+  { href: "/", label: "בית", icon: LayoutGrid },
+  { href: "/leads", label: "לידים", icon: Users },
 ];
 
 export function BottomNav() {
@@ -23,7 +23,7 @@ export function BottomNav() {
             href={href}
             className={cn(
               "flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-colors",
-              active ? "bg-primary-tint text-primary" : "text-muted",
+              active ? "bg-primary-tint text-primary-text" : "text-muted",
             )}
           >
             <Icon size={18} strokeWidth={2} />
@@ -34,7 +34,7 @@ export function BottomNav() {
       <Link
         href="/leads/new"
         className="flex size-9 items-center justify-center rounded-full bg-[image:var(--gradient-brand)] text-white shadow-lg"
-        aria-label="Add lead"
+        aria-label="הוספת ליד"
       >
         <Plus size={18} strokeWidth={2.5} />
       </Link>

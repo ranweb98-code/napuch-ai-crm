@@ -10,7 +10,7 @@ import { formatDate } from "@/lib/dates";
 import { BUTTON_PRIMARY } from "@/lib/styles";
 
 const INPUT_CLASS =
-  "w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
+  "w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-primary-text focus:outline-none focus:ring-1 focus:ring-primary-text";
 const LABEL_CLASS = "mb-1.5 block text-sm font-semibold text-foreground/90";
 
 export interface LeadFormValues {
@@ -41,7 +41,7 @@ export function LeadForm({
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="businessName" className={LABEL_CLASS}>
-            Business name
+            שם העסק
           </label>
           <input
             id="businessName"
@@ -49,24 +49,24 @@ export function LeadForm({
             required
             defaultValue={defaultValues?.businessName}
             className={INPUT_CLASS}
-            placeholder="Acme Inc."
+            placeholder="חברת דוגמה בע״מ"
           />
         </div>
         <div>
           <label htmlFor="contactName" className={LABEL_CLASS}>
-            Contact person
+            איש קשר
           </label>
           <input
             id="contactName"
             name="contactName"
             defaultValue={defaultValues?.contactName ?? ""}
             className={INPUT_CLASS}
-            placeholder="Jane Doe"
+            placeholder="ישראל ישראלי"
           />
         </div>
         <div>
           <label htmlFor="phone" className={LABEL_CLASS}>
-            Phone
+            טלפון
           </label>
           <input
             id="phone"
@@ -74,12 +74,12 @@ export function LeadForm({
             type="tel"
             defaultValue={defaultValues?.phone ?? ""}
             className={INPUT_CLASS}
-            placeholder="+1 555 000 0000"
+            placeholder="050-000-0000"
           />
         </div>
         <div>
           <label htmlFor="channelSource" className={LABEL_CLASS}>
-            Channel source
+            ערוץ הגעה
           </label>
           <select
             id="channelSource"
@@ -97,7 +97,7 @@ export function LeadForm({
         </div>
         <div>
           <label htmlFor="status" className={LABEL_CLASS}>
-            Status
+            סטטוס
           </label>
           <select
             id="status"
@@ -115,7 +115,7 @@ export function LeadForm({
         </div>
         <div>
           <label htmlFor="nextFollowUp" className={LABEL_CLASS}>
-            Next follow-up
+            מעקב הבא
           </label>
           <input
             id="nextFollowUp"
@@ -129,7 +129,7 @@ export function LeadForm({
 
       <div>
         <label htmlFor="notes" className={LABEL_CLASS}>
-          Notes
+          הערות
         </label>
         <textarea
           id="notes"
@@ -137,12 +137,12 @@ export function LeadForm({
           rows={4}
           defaultValue={defaultValues?.notes ?? ""}
           className={INPUT_CLASS}
-          placeholder="Context, pain points, anything worth remembering..."
+          placeholder="הקשר, נקודות כאב, כל מה ששווה לזכור..."
         />
       </div>
 
       {defaultValues?.dateAdded && (
-        <p className="text-sm text-muted">Added {formatDate(defaultValues.dateAdded)}</p>
+        <p className="text-sm text-muted">נוסף בתאריך {formatDate(defaultValues.dateAdded)}</p>
       )}
 
       <div>

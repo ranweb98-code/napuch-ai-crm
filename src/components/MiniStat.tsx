@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 const TINTS = {
   neutral: "bg-border/60 text-foreground",
-  primary: "bg-primary-tint text-primary",
+  primary: "bg-primary-tint text-primary-text",
   warning: "bg-warning-tint text-warning",
   success: "bg-success-tint text-success",
 } as const;

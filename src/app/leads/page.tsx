@@ -1,20 +1,28 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
-import {
-  getLeads,
-  getStatusDistribution,
-  getDashboardStats,
-  type LeadSortKey,
-  type LeadFilter,
-} from "@/lib/leads";
+import { getLeads, getStatusDistribution, getDashboardStats, type LeadSortKey, type LeadFilter } from "@/lib/leads";
+import { getDemoLeadsPageData } from "@/lib/demoData";
 import { LeadRow } from "@/components/LeadRow";
-import { EmptyState } from "@/components/EmptyState";
 import { MiniStat } from "@/components/MiniStat";
 import { BUTTON_PRIMARY } from "@/lib/styles";
 import { cn } from "@/lib/utils";
 
 function isSortKey(value: string | undefined): value is LeadSortKey {
   return value === "status" || value === "nextFollowUp" || value === "dateAdded";
+}
+
+type QueryOptions = { sortBy: LeadSortKey; sortDir: "asc" | "desc"; filter: LeadFilter; query: string };
+
+async function loadLeadsPageData(
+  isDemo: boolean,
+  realDistribution: Awaited<ReturnType<typeof getStatusDistribution>>,
+  options: QueryOptions,
+) {
+  if (isDemo) return getDemoLeadsPageData(new Date(), options);
+
+  const [leads, dashboardStats] = await Promise.all([getLeads(options), getDashboardStats()]);
+  const totalCount = realDistribution.reduce((sum, d) => sum + d.count, 0);
+  return { leads, distribution: realDistribution, totalCount, hotLeads: dashboardStats.hotLeads };
 }
 
 export default async function LeadsPage({
@@ -28,24 +36,15 @@ export default async function LeadsPage({
   const filter: LeadFilter = params.filter === "needs_follow_up" ? "needs_follow_up" : "all";
   const q = params.q?.trim() ?? "";
 
-  const distribution = await getStatusDistribution();
-  const totalCount = distribution.reduce((sum, d) => sum + d.count, 0);
+  const realDistribution = await getStatusDistribution();
+  const isDemo = realDistribution.reduce((sum, d) => sum + d.count, 0) === 0;
 
-  if (totalCount === 0) {
-    return (
-      <EmptyState
-        title="No leads yet"
-        description="Add your first lead to start building your pipeline."
-        actionHref="/leads/new"
-        actionLabel="Add your first lead"
-      />
-    );
-  }
-
-  const [leads, dashboardStats] = await Promise.all([
-    getLeads({ sortBy, sortDir, filter, query: q }),
-    getDashboardStats(),
-  ]);
+  const { leads, distribution, totalCount, hotLeads } = await loadLeadsPageData(isDemo, realDistribution, {
+    sortBy,
+    sortDir,
+    filter,
+    query: q,
+  });
 
   const byStatus = (status: string) => distribution.find((d) => d.status === status)?.count ?? 0;
   const inProgressCount =
@@ -84,26 +83,30 @@ export default async function LeadsPage({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="font-display text-gradient-animate text-4xl font-bold tracking-tight sm:text-5xl">
-          Leads
-        </h1>
+        <div>
+          <h1 className="font-display text-gradient-animate text-4xl font-black tracking-tight sm:text-5xl">
+            לידים
+          </h1>
+          <span className="shine-bar mt-2 block h-1.5 w-16 rounded-full" aria-hidden="true" />
+        </div>
         <Link href="/leads/new" className={BUTTON_PRIMARY}>
-          Add Lead
+          הוספת ליד
         </Link>
       </div>
+      {isDemo && <p className="-mt-4 text-sm text-muted">נתוני דוגמה — הוסף/הוסיפי ליד ראשון כדי להתחיל.</p>}
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="animate-fade-up" style={{ animationDelay: "0ms" }}>
-          <MiniStat label="New" value={byStatus("NEW")} tint="primary" />
+          <MiniStat label="חדש" value={byStatus("NEW")} tint="primary" />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "70ms" }}>
-          <MiniStat label="In progress" value={inProgressCount} tint="warning" />
+          <MiniStat label="בתהליך" value={inProgressCount} tint="warning" />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "140ms" }}>
-          <MiniStat label="Needs follow-up" value={dashboardStats.hotLeads} tint="warning" />
+          <MiniStat label="דורש מעקב" value={hotLeads} tint="warning" />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "210ms" }}>
-          <MiniStat label="Closed" value={closedCount} tint="success" />
+          <MiniStat label="נסגר" value={closedCount} tint="success" />
         </div>
       </div>
 
@@ -117,14 +120,14 @@ export default async function LeadsPage({
           {filter !== "all" && <input type="hidden" name="filter" value={filter} />}
           <Search
             size={16}
-            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted"
+            className="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-muted"
           />
           <input
             type="text"
             name="q"
             defaultValue={q}
-            placeholder="Search leads…"
-            className="w-full rounded-xl border border-border bg-background py-2.5 pl-10 pr-3 text-sm placeholder:text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            placeholder="חיפוש לידים…"
+            className="w-full rounded-xl border border-border bg-background py-2.5 ps-10 pe-3 text-sm placeholder:text-muted focus:border-primary-text focus:outline-none focus:ring-1 focus:ring-primary-text"
           />
         </form>
 
@@ -133,7 +136,7 @@ export default async function LeadsPage({
             href={filterHref("all")}
             className={cn("hover:text-foreground", filter === "all" ? "font-semibold text-foreground" : "text-muted")}
           >
-            All ({totalCount})
+            הכל ({totalCount})
           </Link>
           <Link
             href={filterHref("needs_follow_up")}
@@ -142,31 +145,31 @@ export default async function LeadsPage({
               filter === "needs_follow_up" ? "font-semibold text-warning" : "text-muted",
             )}
           >
-            Needs follow-up
+            דורש מעקב
           </Link>
           <span className="hidden text-border sm:inline">|</span>
-          <span className="text-muted">Sort:</span>
-          {sortLink("nextFollowUp", "Follow-up")}
-          {sortLink("status", "Status")}
-          {sortLink("dateAdded", "Date added")}
+          <span className="text-muted">מיון:</span>
+          {sortLink("nextFollowUp", "מעקב")}
+          {sortLink("status", "סטטוס")}
+          {sortLink("dateAdded", "תאריך הוספה")}
         </div>
       </div>
 
       <div className="card animate-fade-up overflow-hidden" style={{ animationDelay: "320ms" }}>
         <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted sm:flex sm:items-center">
-          <div className="sm:flex-1">Business</div>
-          <div className="sm:w-28 sm:shrink-0">Phone</div>
-          <div className="sm:w-36 sm:shrink-0">Channel</div>
-          <div className="sm:w-40 sm:shrink-0">Status</div>
-          <div className="sm:w-32 sm:shrink-0 sm:text-right">Follow-up</div>
+          <div className="sm:flex-1">עסק</div>
+          <div className="sm:w-28 sm:shrink-0">טלפון</div>
+          <div className="sm:w-36 sm:shrink-0">ערוץ</div>
+          <div className="sm:w-40 sm:shrink-0">סטטוס</div>
+          <div className="sm:w-32 sm:shrink-0 sm:text-end">מעקב</div>
         </div>
 
         {leads.length === 0 ? (
           <p className="px-5 py-12 text-center text-sm text-muted">
-            No leads match{q ? ` "${q}"` : " this filter"}.
+            לא נמצאו לידים{q ? ` עבור "${q}"` : " התואמים את הסינון"}.
           </p>
         ) : (
-          leads.map((lead) => <LeadRow key={lead.id} lead={lead} />)
+          leads.map((lead) => <LeadRow key={lead.id} lead={lead} demo={isDemo} />)
         )}
       </div>
     </div>

@@ -9,13 +9,13 @@ export function DeleteLeadButton({ leadId, businessName }: { leadId: string; bus
     <form
       action={boundDelete}
       onSubmit={(e) => {
-        if (!confirm(`Delete ${businessName}? This can't be undone.`)) {
+        if (!confirm(`למחוק את ${businessName}? לא ניתן לבטל פעולה זו.`)) {
           e.preventDefault();
         }
       }}
     >
       <button type="submit" className="text-sm font-medium text-muted transition-colors hover:text-danger">
-        Delete lead
+        מחיקת ליד
       </button>
     </form>
   );

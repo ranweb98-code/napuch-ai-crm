@@ -3,7 +3,7 @@ import { ACTIVITY_TYPES, ACTIVITY_TYPE_LABELS, type ActivityType } from "@/lib/c
 import { BUTTON_PRIMARY } from "@/lib/styles";
 
 const INPUT_CLASS =
-  "w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
+  "w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-primary-text focus:outline-none focus:ring-1 focus:ring-primary-text";
 const LABEL_CLASS = "mb-1.5 block text-sm font-semibold text-foreground/90";
 
 type LeadOption = { id: string; businessName: string };
@@ -13,7 +13,7 @@ export function ActivityForm({
   leadId,
   leadName,
   defaultType = "NOTE",
-  submitLabel = "Log activity",
+  submitLabel = "רישום פעילות",
 }: {
   leads?: LeadOption[];
   leadId?: string;
@@ -26,11 +26,11 @@ export function ActivityForm({
       {leads ? (
         <div>
           <label htmlFor="leadId" className={LABEL_CLASS}>
-            Lead
+            ליד
           </label>
           <select id="leadId" name="leadId" required className={INPUT_CLASS} defaultValue="">
             <option value="" disabled>
-              Select a lead…
+              בחירת ליד…
             </option>
             {leads.map((lead) => (
               <option key={lead.id} value={lead.id}>
@@ -44,7 +44,7 @@ export function ActivityForm({
           <input type="hidden" name="leadId" value={leadId} />
           {leadName && (
             <p className="text-sm text-muted">
-              For <span className="text-foreground">{leadName}</span>
+              עבור <span className="text-foreground">{leadName}</span>
             </p>
           )}
         </div>
@@ -52,7 +52,7 @@ export function ActivityForm({
 
       <div>
         <label htmlFor="type" className={LABEL_CLASS}>
-          Type
+          סוג
         </label>
         <select id="type" name="type" required defaultValue={defaultType} className={INPUT_CLASS}>
           {ACTIVITY_TYPES.filter((t) => t !== "STATUS_CHANGE").map((type) => (
@@ -65,7 +65,7 @@ export function ActivityForm({
 
       <div>
         <label htmlFor="content" className={LABEL_CLASS}>
-          Details
+          פרטים
         </label>
         <textarea
           id="content"
@@ -73,7 +73,7 @@ export function ActivityForm({
           required
           rows={4}
           className={INPUT_CLASS}
-          placeholder="What happened?"
+          placeholder="מה קרה?"
         />
       </div>
 
