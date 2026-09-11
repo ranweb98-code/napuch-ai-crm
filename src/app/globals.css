@@ -60,7 +60,7 @@
   --color-info-tint: var(--info-tint);
 
   --font-sans: var(--font-manrope);
-  --font-display: var(--font-space-grotesk);
+  --font-display: var(--font-bricolage);
 }
 
 body {
@@ -129,5 +129,87 @@ body {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+}
+
+/* Soft, slowly-drifting color blobs behind the page content — an "aurora"
+   wash across the light background so the whole app (not just headings)
+   carries some special/moving color. Fixed + blurred + low-opacity so it
+   never touches text contrast on the opaque white .card surfaces. */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.3;
+  will-change: transform;
+}
+
+.aurora-blob-1 {
+  top: -12%;
+  left: -8%;
+  width: 32rem;
+  height: 32rem;
+  background: var(--primary);
+  animation: aurora-drift-1 24s ease-in-out infinite alternate;
+}
+
+.aurora-blob-2 {
+  top: 5%;
+  right: -12%;
+  width: 28rem;
+  height: 28rem;
+  background: var(--chart-4);
+  animation: aurora-drift-2 28s ease-in-out infinite alternate;
+}
+
+.aurora-blob-3 {
+  bottom: -15%;
+  left: 25%;
+  width: 34rem;
+  height: 34rem;
+  background: var(--chart-3);
+  animation: aurora-drift-3 32s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-drift-1 {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(4rem, 3rem) scale(1.15);
+  }
+}
+
+@keyframes aurora-drift-2 {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(-3rem, 4rem) scale(0.9);
+  }
+}
+
+@keyframes aurora-drift-3 {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(3rem, -3rem) scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob-1,
+  .aurora-blob-2,
+  .aurora-blob-3 {
+    animation: none;
   }
 }

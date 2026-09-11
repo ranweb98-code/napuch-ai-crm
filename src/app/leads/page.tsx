@@ -84,20 +84,33 @@ export default async function LeadsPage({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="font-display text-3xl font-bold tracking-tight">Leads</h1>
+        <h1 className="font-display text-gradient-animate text-4xl font-bold tracking-tight sm:text-5xl">
+          Leads
+        </h1>
         <Link href="/leads/new" className={BUTTON_PRIMARY}>
           Add Lead
         </Link>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <MiniStat label="New" value={byStatus("NEW")} tint="primary" />
-        <MiniStat label="In progress" value={inProgressCount} tint="warning" />
-        <MiniStat label="Needs follow-up" value={dashboardStats.hotLeads} tint="warning" />
-        <MiniStat label="Closed" value={closedCount} tint="success" />
+        <div className="animate-fade-up" style={{ animationDelay: "0ms" }}>
+          <MiniStat label="New" value={byStatus("NEW")} tint="primary" />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "70ms" }}>
+          <MiniStat label="In progress" value={inProgressCount} tint="warning" />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "140ms" }}>
+          <MiniStat label="Needs follow-up" value={dashboardStats.hotLeads} tint="warning" />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "210ms" }}>
+          <MiniStat label="Closed" value={closedCount} tint="success" />
+        </div>
       </div>
 
-      <div className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        className="card animate-fade-up flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+        style={{ animationDelay: "260ms" }}
+      >
         <form action="/leads" method="GET" className="relative w-full sm:max-w-xs">
           <input type="hidden" name="sort" value={sortBy} />
           <input type="hidden" name="dir" value={sortDir} />
@@ -139,7 +152,7 @@ export default async function LeadsPage({
         </div>
       </div>
 
-      <div className="card overflow-hidden">
+      <div className="card animate-fade-up overflow-hidden" style={{ animationDelay: "320ms" }}>
         <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted sm:flex sm:items-center">
           <div className="sm:flex-1">Business</div>
           <div className="sm:w-28 sm:shrink-0">Phone</div>
