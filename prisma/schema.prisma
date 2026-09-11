@@ -4,6 +4,14 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
+  // Cloudflare Workers (workerd) disallow compiling WebAssembly at request
+  // time — only statically-imported .wasm modules are pre-compiled at
+  // deploy time. The default "nodejs" runtime target instead base64-decodes
+  // the query compiler wasm and calls `new WebAssembly.Module()` on every
+  // cold start, which trips workerd's "Wasm code generation disallowed by
+  // embedder" guard. The "workerd" runtime target statically imports the
+  // .wasm file instead, which workerd allows.
+  runtime  = "workerd"
 }
 
 datasource db {
