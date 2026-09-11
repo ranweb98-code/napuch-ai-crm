@@ -14,12 +14,13 @@ import {
   getStatusDistribution,
   getRecentLeads,
   followUpStatusLine,
+  type DashboardStats,
 } from "@/lib/leads";
+import { getDemoDashboardData, type RecentLeadItem } from "@/lib/demoDashboard";
 import { StatCard } from "@/components/StatCard";
 import { LeadsAddedChart } from "@/components/LeadsAddedChart";
 import { DonutChart } from "@/components/DonutChart";
 import { Avatar } from "@/components/Avatar";
-import { EmptyState } from "@/components/EmptyState";
 import { formatDate } from "@/lib/dates";
 
 // This page reads live data through Prisma (not `fetch`), which Next.js
@@ -40,25 +41,21 @@ const QUICK_ACTIONS = [
   { href: "/activity/new", label: "Log Activity", icon: ClipboardList },
 ];
 
-export default async function DashboardPage() {
-  const stats = await getDashboardStats();
-
-  if (stats.totalLeads === 0) {
-    return (
-      <EmptyState
-        title="No leads yet"
-        description="Start tracking your pipeline for Napuch AI — add the first business you're talking to."
-        actionHref="/leads/new"
-        actionLabel="Add your first lead"
-      />
-    );
-  }
+async function loadDashboardData(isDemo: boolean, realStats: DashboardStats) {
+  if (isDemo) return getDemoDashboardData();
 
   const [timeline, distribution, recent] = await Promise.all([
     getLeadsAddedTimeline(30),
     getStatusDistribution(),
     getRecentLeads(5),
   ]);
+  return { stats: realStats, timeline, distribution, recent: recent as RecentLeadItem[] };
+}
+
+export default async function DashboardPage() {
+  const realStats = await getDashboardStats();
+  const isDemo = realStats.totalLeads === 0;
+  const { stats, timeline, distribution, recent } = await loadDashboardData(isDemo, realStats);
 
   const last7 = timeline.slice(-7).reduce((sum, p) => sum + p.count, 0);
   const prev7 = timeline.slice(-14, -7).reduce((sum, p) => sum + p.count, 0);
@@ -86,7 +83,9 @@ export default async function DashboardPage() {
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="text-2xl font-bold">{greeting(new Date())} 👋</h1>
-        <p className="mt-1 text-muted">{followUpStatusLine(stats)}</p>
+        <p className="mt-1 text-muted">
+          {isDemo ? "Sample data — add your first lead to get started." : followUpStatusLine(stats)}
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -124,19 +123,30 @@ export default async function DashboardPage() {
           </Link>
         </div>
         <div className="flex flex-wrap gap-5">
-          {recent.map((lead) => (
-            <Link
-              key={lead.id}
-              href={`/leads/${lead.id}`}
-              className="flex flex-col items-center gap-2 text-center"
-            >
-              <Avatar name={lead.businessName} />
-              <span className="max-w-20 truncate text-xs font-medium text-foreground">
-                {lead.businessName}
-              </span>
-              <span className="text-[11px] text-muted">{formatDate(lead.dateAdded)}</span>
-            </Link>
-          ))}
+          {recent.map((lead) => {
+            const content = (
+              <>
+                <Avatar name={lead.businessName} />
+                <span className="max-w-20 truncate text-xs font-medium text-foreground">
+                  {lead.businessName}
+                </span>
+                <span className="text-[11px] text-muted">{formatDate(lead.dateAdded)}</span>
+              </>
+            );
+            return isDemo ? (
+              <div key={lead.id} className="flex flex-col items-center gap-2 text-center">
+                {content}
+              </div>
+            ) : (
+              <Link
+                key={lead.id}
+                href={`/leads/${lead.id}`}
+                className="flex flex-col items-center gap-2 text-center"
+              >
+                {content}
+              </Link>
+            );
+          })}
         </div>
       </div>
 
